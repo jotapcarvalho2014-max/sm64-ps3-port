@@ -3,18 +3,15 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ghcr.io/resmo/psl1ght:master
+    container: bucanero/ps3dev:latest
     steps:
       - uses: actions/checkout@v4
       - name: Build
         run: |
-          mkdir -p build/ps3
           cp bin/baserom.us.z64 ./baserom.us.z64
-          make COMPARE=0 -j$(nproc)
+          make COMPARE=0
       - name: Upload PKG
         uses: actions/upload-artifact@v4
         with:
           name: sm64-ps3-pkg
-          path: |
-            ./*.pkg
-            ./build/ps3/*.pkg
+          path: ./*.pkg
