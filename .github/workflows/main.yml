@@ -3,7 +3,7 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ghcr.io/resmo/psl1ght:master
+    container: stayno/psl1ght:latest
     steps:
       - uses: actions/checkout@v4
       - name: Build
