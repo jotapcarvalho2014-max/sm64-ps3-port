@@ -3,14 +3,29 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: bucanero/ps3dev:latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git python3 wget distro-info
+          
+      - name: Install PS3 SDK (PSL1GHT)
+        run: |
+          wget https://github.com
+          sudo tar -xzvf ps3dev-ubuntu-latest-2021-11-14.tar.gz -C /
+          echo "PS3DEV=/usr/local/ps3dev" >> $GITHUB_ENV
+          echo "PSL1GHT=/usr/local/ps3dev/psl1ght" >> $GITHUB_ENV
+          echo "/usr/local/ps3dev/bin" >> $GITHUB_PATH
+          echo "/usr/local/ps3dev/ppu/bin" >> $GITHUB_PATH
+
+      - name: Build SM64 PKG
         run: |
           cp bin/baserom.us.z64 ./baserom.us.z64
-          make COMPARE=0
-      - name: Upload PKG
+          make COMPARE=0 -j$(nproc)
+          
+      - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
           name: sm64-ps3-pkg
