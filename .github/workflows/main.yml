@@ -3,20 +3,14 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: ghcr.io/resmo/psl1ght:master
     steps:
       - uses: actions/checkout@v4
-      - name: Install Tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential git python3 python3-pip
-      - name: Setup SDK
-        run: |
-          wget https://github.com
-          # Nota: O repositório do Sdiraimondo costuma aceitar o compilador GCC padrão se configurado.
       - name: Build
         run: |
+          mkdir -p build/ps3
           cp bin/baserom.us.z64 ./baserom.us.z64
-          make
+          make COMPARE=0 -j$(nproc)
       - name: Upload PKG
         uses: actions/upload-artifact@v4
         with:
