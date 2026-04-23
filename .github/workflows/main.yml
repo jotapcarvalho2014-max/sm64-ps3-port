@@ -5,12 +5,13 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/resmo/psl1ght:master
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Build
         run: |
+          cp bin/baserom.us.z64 ./baserom.us.z64
           make
       - name: Upload PKG
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: sm64-ps3-pkg
           path: ./*.pkg
