@@ -1,0 +1,16 @@
+name: Build SM64 PS3
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/resmo/psl1ght:master
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: |
+          make
+      - name: Upload PKG
+        uses: actions/upload-artifact@v2
+        with:
+          name: sm64-ps3-pkg
+          path: ./*.pkg
