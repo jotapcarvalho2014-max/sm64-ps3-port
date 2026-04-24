@@ -13,23 +13,21 @@ jobs:
 
       - name: Setup PS3 SDK
         run: |
-          # Baixa o instalador oficial do PS3Dev
-          git clone https://github.com/ps3dev/ps3dev.git ps3dev-repo
-          cd ps3dev-repo
-          # Define onde o SDK vai morar
+          git clone --depth 1 https://github.com/ps3dev/ps3dev.git ps3dev-repo
           echo "PS3DEV=/usr/local/ps3dev" >> $GITHUB_ENV
           echo "PSL1GHT=/usr/local/ps3dev/psl1ght" >> $GITHUB_ENV
           echo "/usr/local/ps3dev/bin" >> $GITHUB_PATH
 
       - name: Build SM64 PKG
         run: |
+          # Coloca a ROM no lugar certo
           cp bin/baserom.us.z64 ./baserom.us.z64
+          # Tenta compilar ignorando erros de hash
           make COMPARE=0 -j$(nproc)
           
-      - name: Upload Result
+      - name: Upload PKG
         uses: actions/upload-artifact@v4
         with:
           name: sm64-ps3-pkg
-          path: |
-            ./*.pkg
-            ./build/ps3/*.pkg
+          path: ./*.pkg
+
