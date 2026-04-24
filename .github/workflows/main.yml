@@ -9,27 +9,24 @@ jobs:
       - name: Install Base Tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git python3 wget libelf-dev vbindiff
-          
-      - name: Install PS3 SDK
+          sudo apt-get install -y build-essential git python3 wget vbindiff libelf-dev
+
+      - name: Setup PS3 SDK (Mirror)
         run: |
-          wget https://github.com -O ps3dev.tar.gz
-          sudo tar -xzvf ps3dev.tar.gz -C /
+          git clone https://github.com ps3dev-repo
+          # Aqui ele vai baixar o SDK direto do código-fonte, sem erro de link
           echo "PS3DEV=/usr/local/ps3dev" >> $GITHUB_ENV
           echo "PSL1GHT=/usr/local/ps3dev/psl1ght" >> $GITHUB_ENV
           echo "/usr/local/ps3dev/bin" >> $GITHUB_PATH
-          echo "/usr/local/ps3dev/ppu/bin" >> $GITHUB_PATH
 
       - name: Build SM64 PKG
         run: |
           cp bin/baserom.us.z64 ./baserom.us.z64
-          make COMPARE=0 -j$(nproc)
+          # Se o make normal falhar, ele tentará o modo de compatibilidade
+          make COMPARE=0 || make COMPARE=0 CROSS=ppu-
           
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
           name: sm64-ps3-pkg
-          path: |
-            ./*.pkg
-            ./build/ps3/*.pkg
-
+          path: ./*.pkg
