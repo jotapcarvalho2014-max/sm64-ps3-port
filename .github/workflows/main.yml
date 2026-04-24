@@ -9,12 +9,12 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git python3 wget distro-info
+          sudo apt-get install -y build-essential git python3 wget vbindiff
           
-      - name: Install PS3 SDK (PSL1GHT)
+      - name: Install PS3 SDK
         run: |
-          wget https://github.com
-          sudo tar -xzvf ps3dev-ubuntu-latest-2021-11-14.tar.gz -C /
+          wget https://github.com -O ps3dev.tar.gz
+          sudo tar -xzvf ps3dev.tar.gz -C /
           echo "PS3DEV=/usr/local/ps3dev" >> $GITHUB_ENV
           echo "PSL1GHT=/usr/local/ps3dev/psl1ght" >> $GITHUB_ENV
           echo "/usr/local/ps3dev/bin" >> $GITHUB_PATH
@@ -30,3 +30,4 @@ jobs:
         with:
           name: sm64-ps3-pkg
           path: ./*.pkg
+
