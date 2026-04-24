@@ -2,23 +2,19 @@ name: Build SM64 PS3
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Base Tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git python3 wget libelf-dev
-
-      - name: Download and Install PS3 SDK
-        run: |
-          # Baixa o SDK de um servidor alternativo (Bucanero)
-          wget https://github.com -O ps3dev.tar.gz
-          # Extrai diretamente na raiz do sistema do GitHub
-          sudo tar -xzvf ps3dev.tar.gz -C /
+          sudo apt-get install -y build-essential git python3 wget libelf-dev vbindiff
           
-          # Configura as variáveis de ambiente para o sistema achar o compilador
+      - name: Install PS3 SDK
+        run: |
+          wget https://github.com -O ps3dev.tar.gz
+          sudo tar -xzvf ps3dev.tar.gz -C /
           echo "PS3DEV=/usr/local/ps3dev" >> $GITHUB_ENV
           echo "PSL1GHT=/usr/local/ps3dev/psl1ght" >> $GITHUB_ENV
           echo "/usr/local/ps3dev/bin" >> $GITHUB_PATH
@@ -26,14 +22,14 @@ jobs:
 
       - name: Build SM64 PKG
         run: |
-          # Garante que a ROM está no lugar certo
           cp bin/baserom.us.z64 ./baserom.us.z64
-          # Compila ignorando o erro de modificação (Shotgun)
           make COMPARE=0 -j$(nproc)
           
-      - name: Upload PKG
+      - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
           name: sm64-ps3-pkg
-          path: ./*.pkg
+          path: |
+            ./*.pkg
+            ./build/ps3/*.pkg
 
